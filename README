@@ -1,0 +1,77 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=2223
+
+We cannot add new Vim modes using Vim script.  But we can map keys in a way
+that comes close.  Example:
+
+    nmap          <C-W>+     <C-W>+<SID>ws
+    nmap          <C-W>-     <C-W>-<SID>ws
+    nn <script>   <SID>ws+   <C-W>+<SID>ws
+    nn <script>   <SID>ws-   <C-W>-<SID>ws
+    nmap          <SID>ws    <Nop>
+
+These mappings make the builtin CTRL-W_+ and CTRL-W_- (in short ^W+, ^W-)
+keys a little smarter: You can now type ^W++- instead of ^W+^W+^W- to change
+the window size.  It's like ^W+ enters a "Vim mode" with the new keys + and - .
+
+tinymode.vim is not needed to create such mappings, but it adds some
+benefits:
+
+- tinymode-style notation of the above mappings:
+
+    call tinymode#EnterMap("winsize", "<C-W>+", "+")
+    call tinymode#EnterMap("winsize", "<C-W>-", "-")
+    call tinymode#Map("winsize", "+", "wincmd +")
+    call tinymode#Map("winsize", "-", "wincmd -")
+
+Ok, no benefits yet, but read on:
+
+- you can enable support for a count typed within a mode:
+
+    call tinymode#ModeArg("winsize", "owncount", 1)
+
+  you need a literal [N] in the commands for the count to be recognized:
+
+    call tinymode#Map("winsize", "+", "[N]wincmd +")
+    call tinymode#Map("winsize", "-", "[N]wincmd -")
+
+- mode message
+
+    call tinymode#ModeMsg("winsize", "Change window size +/-")
+
+  The mode message makes it easy to spot that a mode is active.  It is even
+  more useful when it shows the available keys.
+
+- different 'timeoutlen'
+
+    call tinymode#ModeArg("winsize", "timeoutlen", 5000)
+
+  In most cases, the default 'timeoutlen' of 1000 ms is too short.  That's
+  why tinymode sets the default to 3000 ms throughout a mode.  If this is
+  not enough, another value can be given.
+
+- interruption recovery
+
+    LeaveMode
+
+  The "tinymode technique" has a backdraw: If a command "beeps" or you press
+  CTRL-C, the chain of mappings is interrupted, which means the necessary
+  clean up before leaving a mode is skipped.  "Clean up" means to set some
+  options back to previous values ('timeoutlen', 'cpo', 'showcmd').
+  Unfortunately, a beep cannot be catched like other errors.
+
+  If you detect this situation, you can start and leave a mode in a clean
+  way or execute :LeaveMode .
+
+- timeout warning
+
+  Sooner or later a tiny mode times out automatically.  As a visual hint
+  that a mode will time out soon the color of the mode message will be
+  changed from ModeMsg to Normal.
+
+(btw: this exact description is not part of the zip package)
+
+2008 Nov 14
+
+looks as if a similar script has been added:
+vimscript #2467
+
