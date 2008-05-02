@@ -1,8 +1,8 @@
 " File:         tinym_ex.vim
 " Created:      2008 Apr 29
-" Last Change:  2008 Apr 30
+" Last Change:  2008 May 01
 " Author:	Andy Wokula <anwoku@yahoo.de>
-" Version:	0.1
+" Version:	0.2
 
 " examples for tinymode.vim
 " Usage:
@@ -18,9 +18,10 @@ set timeoutlen=3000
 call tinymode#EnterMap("mode1", "gt", "t")
 call tinymode#EnterMap("mode1", "gT", "T")
 call tinymode#ModeMsg("mode1", "Cycle tab pages [0/t/T/$]", 1)
+call tinymode#ModeArg("mode1", "owncount")
 call tinymode#Map("mode1", "0", "tabfirst")
-call tinymode#Map("mode1", "t", "norm! gt")
-call tinymode#Map("mode1", "T", "norm! gT")
+call tinymode#Map("mode1", "t", "norm! [N]gt")
+call tinymode#Map("mode1", "T", "norm! [N]gT")
 call tinymode#Map("mode1", "$", "tablast")
 " easter eggs
 call tinymode#Map("mode1", "n", "tabnew")
@@ -70,19 +71,21 @@ call tinymode#EnterMap("winsize", "<C-W><", "<")
 call tinymode#EnterMap("winsize", "<C-W>+", "+")
 call tinymode#EnterMap("winsize", "<C-W>-", "-")
 call tinymode#ModeMsg("winsize", "Change window size +/-/</>/t/b/w/W")
-call tinymode#Map("winsize", ">", "4wincmd >")
-call tinymode#Map("winsize", "<", "4wincmd <")
-call tinymode#Map("winsize", "+", "wincmd +")
-call tinymode#Map("winsize", "-", "wincmd -")
-call tinymode#Map("winsize", "_", "wincmd -")
-call tinymode#Map("winsize", "t", "wincmd t")
-call tinymode#Map("winsize", "b", "wincmd b")
-call tinymode#Map("winsize", "w", "wincmd w")
-call tinymode#Map("winsize", "W", "wincmd W")
+call tinymode#Map("winsize", ">", "#wincmd >")
+call tinymode#Map("winsize", "<", "#wincmd <")
+call tinymode#Map("winsize", "+", "#wincmd +")
+call tinymode#Map("winsize", "-", "#wincmd -")
+call tinymode#Map("winsize", "_", "#wincmd -")
+call tinymode#Map("winsize", "t", "#wincmd t")
+call tinymode#Map("winsize", "b", "#wincmd b")
+call tinymode#Map("winsize", "w", "sil! #wincmd w")
+call tinymode#Map("winsize", "W", "sil! #wincmd W")
+" keep the mode active when typing digits:
+call tinymode#ModeArg("winsize", "owncount", "#")
 
 " echo tinymode#modes
 
 func! tinym_ex#require()
 endfunc
 
-" vim:set isk+=# :
+" vim:set isk+=# ts=8 sts=4 sw=4 noet:
